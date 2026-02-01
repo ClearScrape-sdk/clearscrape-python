@@ -7,7 +7,7 @@ name = "clearscrape"
 version = "1.0.0"
 description = "Official Python SDK for ClearScrape - Web Scraping API"
 readme = "README.md"
-license = "MIT"
+license = {text = "MIT"}
 requires-python = ">=3.8"
 authors = [
     { name = "ClearScrape", email = "support@clearscrape.io" }
@@ -59,6 +59,9 @@ Issues = "https://github.com/ClearScrape-sdk/clearscrape-python/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["clearscrape"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.ruff]
 line-length = 88
