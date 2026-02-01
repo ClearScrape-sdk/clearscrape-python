@@ -1,0 +1,59 @@
+{
+  "name": "clearscrape",
+  "version": "1.0.0",
+  "description": "Official Node.js SDK for ClearScrape - Web Scraping API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "clearscrape",
+    "web-scraping",
+    "scraper",
+    "scraping-api",
+    "proxy",
+    "antibot",
+    "playwright",
+    "puppeteer"
+  ],
+  "author": "ClearScrape",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/clearscrape/clearscrape-node"
+  },
+  "homepage": "https://clearscrape.io/docs",
+  "bugs": {
+    "url": "https://github.com/clearscrape/clearscrape-node/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2",
+    "vitest": "^1.0.0",
+    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0"
+  }
+}
