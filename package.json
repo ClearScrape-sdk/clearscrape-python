@@ -38,11 +38,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/clearscrape/clearscrape-node"
+    "url": "https://github.com/ClearScrape-sdk/clearscrape-node"
   },
   "homepage": "https://clearscrape.io/docs",
   "bugs": {
-    "url": "https://github.com/clearscrape/clearscrape-node/issues"
+    "url": "https://github.com/ClearScrape-sdk/clearscrape-node/issues"
   },
   "engines": {
     "node": ">=16.0.0"
