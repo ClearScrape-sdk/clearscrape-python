@@ -256,8 +256,8 @@ const client = new ClearScrape({
   // Required: Your API key
   apiKey: 'your-api-key',
 
-  // Optional: Custom base URL (default: https://api.clearscrape.io)
-  baseUrl: 'https://api.clearscrape.io',
+  // Optional: Custom base URL (default: https://clearscrape.io/api)
+  baseUrl: 'https://clearscrape.io/api',
 
   // Optional: Request timeout in ms (default: 60000)
   timeout: 60000,

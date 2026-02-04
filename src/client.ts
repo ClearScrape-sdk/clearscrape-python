@@ -10,7 +10,7 @@ import {
   RateLimitError,
 } from './types';
 
-const DEFAULT_BASE_URL = 'https://api.clearscrape.io';
+const DEFAULT_BASE_URL = 'https://clearscrape.io/api';
 const DEFAULT_TIMEOUT = 60000;
 const DEFAULT_RETRIES = 3;
 
@@ -76,7 +76,7 @@ export class ClearScrape {
    */
   async scrape(options: ScrapeOptions): Promise<ScrapeResponse> {
     const payload = this.buildPayload(options);
-    return this.makeRequest('/api/scrape', payload);
+    return this.makeRequest('/scrape', payload);
   }
 
   /**
@@ -88,7 +88,7 @@ export class ClearScrape {
    */
   async getHtml(url: string, options?: Omit<ScrapeOptions, 'url'>): Promise<string> {
     const result = await this.scrape({ url, ...options });
-    return result.data.html;
+    return result.data.html || '';
   }
 
   /**
@@ -167,11 +167,14 @@ export class ClearScrape {
   ): Promise<T> {
     const result = await this.scrape({ url, domain });
 
-    if (!result.data.extracted) {
+    // Check domain_data first (used by domain-specific endpoints), then extracted
+    const data = result.data.domain_data || result.data.extracted;
+
+    if (!data) {
       throw new ClearScrapeError('No extracted data returned', 500);
     }
 
-    return result.data.extracted as T;
+    return data as T;
   }
 
   /**
@@ -277,16 +280,33 @@ export class ClearScrape {
     if (options.method) payload.method = options.method;
     if (options.jsRender) payload.js_render = options.jsRender;
     if (options.premiumProxy) payload.premium_proxy = options.premiumProxy;
+    if (options.stealthProxy) payload.stealth_proxy = options.stealthProxy;
     if (options.antibot) payload.antibot = options.antibot;
+    if (options.antibotAdvanced) payload.antibot_advanced = options.antibotAdvanced;
     if (options.proxyCountry) payload.proxy_country = options.proxyCountry;
+    if (options.proxyCity) payload.proxy_city = options.proxyCity;
+    if (options.proxyState) payload.proxy_state = options.proxyState;
+    if (options.proxyZip) payload.proxy_zip = options.proxyZip;
     if (options.waitFor) payload.wait_for = options.waitFor;
     if (options.wait) payload.wait = options.wait;
     if (options.autoScroll) payload.auto_scroll = options.autoScroll;
+    if (options.scrollCount) payload.scroll_count = options.scrollCount;
     if (options.screenshot) payload.screenshot = options.screenshot;
+    if (options.screenshotFullpage) payload.screenshot_fullpage = options.screenshotFullpage;
     if (options.screenshotSelector) payload.screenshot_selector = options.screenshotSelector;
     if (options.headers) payload.headers = options.headers;
     if (options.body) payload.body = options.body;
     if (options.domain) payload.domain = options.domain;
+    if (options.cssExtractor) payload.css_extractor = options.cssExtractor;
+    if (options.autoparse) payload.autoparse = options.autoparse;
+    if (options.output) payload.output = options.output;
+    if (options.jsScenario) payload.js_scenario = options.jsScenario;
+    if (options.blockAds) payload.block_ads = options.blockAds;
+    if (options.blockResources) payload.block_resources = options.blockResources;
+    if (options.device) payload.device = options.device;
+    if (options.aiExtract) payload.ai_extract = options.aiExtract;
+    if (options.sessionId) payload.session_id = options.sessionId;
+    if (options.callbackUrl) payload.callback_url = options.callbackUrl;
 
     return payload;
   }
@@ -366,7 +386,7 @@ export class ClearScrape {
     if (attempt < this.retries) {
       const delay = statusCode === 429 ? 5000 : Math.pow(2, attempt) * 1000;
       await this.sleep(delay);
-      return this.makeRequest('/api/scrape', payload, attempt + 1);
+      return this.makeRequest('/scrape', payload, attempt + 1);
     }
 
     if (statusCode === 429) {
