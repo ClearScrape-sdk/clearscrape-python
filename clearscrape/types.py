@@ -18,6 +18,26 @@ DomainType = Literal[
     "yelp",
     "indeed",
     "linkedin_jobs",
+    "twitter",
+    "reddit",
+    "aliexpress",
+    "booking",
+    "tripadvisor",
+    "glassdoor",
+    "realtor",
+    "redfin",
+    "trulia",
+    "craigslist",
+    "alibaba",
+    "wayfair",
+    "costco",
+    "lowes",
+    "macys",
+    "nordstrom",
+    "zappos",
+    "chewy",
+    "newegg",
+    "expedia",
 ]
 
 
@@ -46,10 +66,14 @@ class ScrapeResponse:
     """Response from a scraping request."""
 
     success: bool
-    html: str
+    html: Optional[str] = None
     text: Optional[str] = None
+    markdown: Optional[str] = None
     screenshot: Optional[str] = None
     extracted: Optional[Dict[str, Any]] = None
+    domain_data: Optional[Dict[str, Any]] = None
+    autoparse: Optional[Dict[str, Any]] = None
+    outputs: Optional[Dict[str, Any]] = None
     metadata: Optional[Dict[str, Any]] = None
     credits_used: int = 1
     url: Optional[str] = None
@@ -58,16 +82,22 @@ class ScrapeResponse:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "ScrapeResponse":
         """Create a ScrapeResponse from a dictionary."""
+        response_data = data.get("data", {})
+        metadata = data.get("metadata", {})
         return cls(
             success=data.get("success", True),
-            html=data.get("data", {}).get("html", ""),
-            text=data.get("data", {}).get("text"),
-            screenshot=data.get("data", {}).get("screenshot"),
-            extracted=data.get("data", {}).get("extracted"),
-            metadata=data.get("data", {}).get("metadata"),
-            credits_used=data.get("credits_used", 1),
-            url=data.get("data", {}).get("url"),
-            status_code=data.get("data", {}).get("status_code"),
+            html=response_data.get("html", ""),
+            text=response_data.get("text"),
+            markdown=response_data.get("markdown"),
+            screenshot=response_data.get("screenshot"),
+            extracted=response_data.get("extracted"),
+            domain_data=response_data.get("domain_data"),
+            autoparse=response_data.get("autoparse"),
+            outputs=response_data.get("outputs"),
+            metadata=metadata,
+            credits_used=metadata.get("cost", 1),
+            url=metadata.get("url"),
+            status_code=metadata.get("statusCode"),
         )
 
 

@@ -251,8 +251,8 @@ client = ClearScrape(
     # Required: Your API key
     api_key="your-api-key",
 
-    # Optional: Custom base URL (default: https://api.clearscrape.io)
-    base_url="https://api.clearscrape.io",
+    # Optional: Custom base URL (default: https://clearscrape.io/api)
+    base_url="https://clearscrape.io/api",
 
     # Optional: Request timeout in seconds (default: 60)
     timeout=60,

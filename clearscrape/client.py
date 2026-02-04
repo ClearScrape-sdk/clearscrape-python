@@ -17,7 +17,7 @@ from .types import ScrapeOptions, ScrapeResponse, ProxyConfig, DomainType
 
 T = TypeVar("T")
 
-DEFAULT_BASE_URL = "https://api.clearscrape.io"
+DEFAULT_BASE_URL = "https://clearscrape.io/api"
 DEFAULT_TIMEOUT = 60.0
 DEFAULT_RETRIES = 3
 
@@ -98,16 +98,33 @@ class ClearScrape:
         method: str = "GET",
         js_render: bool = False,
         premium_proxy: bool = False,
+        stealth_proxy: bool = False,
         antibot: bool = False,
+        antibot_advanced: bool = False,
         proxy_country: Optional[str] = None,
+        proxy_city: Optional[str] = None,
+        proxy_state: Optional[str] = None,
+        proxy_zip: Optional[str] = None,
         wait_for: Optional[str] = None,
         wait: Optional[int] = None,
         auto_scroll: bool = False,
+        scroll_count: Optional[int] = None,
         screenshot: bool = False,
+        screenshot_fullpage: bool = False,
         screenshot_selector: Optional[str] = None,
         headers: Optional[Dict[str, str]] = None,
         body: Optional[str] = None,
         domain: Optional[DomainType] = None,
+        css_extractor: Optional[str] = None,
+        autoparse: bool = False,
+        output: Optional[str] = None,
+        js_scenario: Optional[str] = None,
+        block_ads: bool = False,
+        block_resources: bool = False,
+        device: Optional[str] = None,
+        ai_extract: Optional[str] = None,
+        session_id: Optional[str] = None,
+        callback_url: Optional[str] = None,
     ) -> ScrapeResponse:
         """
         Scrape a URL and return the HTML content.
@@ -147,18 +164,32 @@ class ClearScrape:
             payload["js_render"] = True
         if premium_proxy:
             payload["premium_proxy"] = True
+        if stealth_proxy:
+            payload["stealth_proxy"] = True
         if antibot:
             payload["antibot"] = True
+        if antibot_advanced:
+            payload["antibot_advanced"] = True
         if proxy_country:
             payload["proxy_country"] = proxy_country
+        if proxy_city:
+            payload["proxy_city"] = proxy_city
+        if proxy_state:
+            payload["proxy_state"] = proxy_state
+        if proxy_zip:
+            payload["proxy_zip"] = proxy_zip
         if wait_for:
             payload["wait_for"] = wait_for
         if wait:
             payload["wait"] = wait
         if auto_scroll:
             payload["auto_scroll"] = True
+        if scroll_count:
+            payload["scroll_count"] = scroll_count
         if screenshot:
             payload["screenshot"] = True
+        if screenshot_fullpage:
+            payload["screenshot_fullpage"] = True
         if screenshot_selector:
             payload["screenshot_selector"] = screenshot_selector
         if headers:
@@ -167,8 +198,28 @@ class ClearScrape:
             payload["body"] = body
         if domain:
             payload["domain"] = domain
+        if css_extractor:
+            payload["css_extractor"] = css_extractor
+        if autoparse:
+            payload["autoparse"] = True
+        if output:
+            payload["output"] = output
+        if js_scenario:
+            payload["js_scenario"] = js_scenario
+        if block_ads:
+            payload["block_ads"] = True
+        if block_resources:
+            payload["block_resources"] = True
+        if device:
+            payload["device"] = device
+        if ai_extract:
+            payload["ai_extract"] = ai_extract
+        if session_id:
+            payload["session_id"] = session_id
+        if callback_url:
+            payload["callback_url"] = callback_url
 
-        data = self._make_request("/api/scrape", payload)
+        data = self._make_request("/scrape", payload)
         return ScrapeResponse.from_dict(data)
 
     def get_html(
@@ -285,10 +336,13 @@ class ClearScrape:
         """
         result = self.scrape(url, domain=domain, **kwargs)
 
-        if not result.extracted:
+        # Check domain_data first (used by domain-specific endpoints), then extracted
+        data = result.domain_data or result.extracted
+
+        if not data:
             raise ClearScrapeError("No extracted data returned")
 
-        return result.extracted
+        return data
 
     def get_proxy_config(
         self,
@@ -451,7 +505,7 @@ class ClearScrape:
         if attempt < self.retries:
             delay = 5 if status_code == 429 else 2**attempt
             time.sleep(delay)
-            return self._make_request("/api/scrape", payload, attempt + 1)
+            return self._make_request("/scrape", payload, attempt + 1)
 
         if status_code == 429:
             raise RateLimitError(message)
@@ -517,16 +571,33 @@ class AsyncClearScrape:
         method: str = "GET",
         js_render: bool = False,
         premium_proxy: bool = False,
+        stealth_proxy: bool = False,
         antibot: bool = False,
+        antibot_advanced: bool = False,
         proxy_country: Optional[str] = None,
+        proxy_city: Optional[str] = None,
+        proxy_state: Optional[str] = None,
+        proxy_zip: Optional[str] = None,
         wait_for: Optional[str] = None,
         wait: Optional[int] = None,
         auto_scroll: bool = False,
+        scroll_count: Optional[int] = None,
         screenshot: bool = False,
+        screenshot_fullpage: bool = False,
         screenshot_selector: Optional[str] = None,
         headers: Optional[Dict[str, str]] = None,
         body: Optional[str] = None,
         domain: Optional[DomainType] = None,
+        css_extractor: Optional[str] = None,
+        autoparse: bool = False,
+        output: Optional[str] = None,
+        js_scenario: Optional[str] = None,
+        block_ads: bool = False,
+        block_resources: bool = False,
+        device: Optional[str] = None,
+        ai_extract: Optional[str] = None,
+        session_id: Optional[str] = None,
+        callback_url: Optional[str] = None,
     ) -> ScrapeResponse:
         """Async version of scrape(). See ClearScrape.scrape() for details."""
         payload: Dict[str, Any] = {"url": url}
@@ -537,18 +608,32 @@ class AsyncClearScrape:
             payload["js_render"] = True
         if premium_proxy:
             payload["premium_proxy"] = True
+        if stealth_proxy:
+            payload["stealth_proxy"] = True
         if antibot:
             payload["antibot"] = True
+        if antibot_advanced:
+            payload["antibot_advanced"] = True
         if proxy_country:
             payload["proxy_country"] = proxy_country
+        if proxy_city:
+            payload["proxy_city"] = proxy_city
+        if proxy_state:
+            payload["proxy_state"] = proxy_state
+        if proxy_zip:
+            payload["proxy_zip"] = proxy_zip
         if wait_for:
             payload["wait_for"] = wait_for
         if wait:
             payload["wait"] = wait
         if auto_scroll:
             payload["auto_scroll"] = True
+        if scroll_count:
+            payload["scroll_count"] = scroll_count
         if screenshot:
             payload["screenshot"] = True
+        if screenshot_fullpage:
+            payload["screenshot_fullpage"] = True
         if screenshot_selector:
             payload["screenshot_selector"] = screenshot_selector
         if headers:
@@ -557,8 +642,28 @@ class AsyncClearScrape:
             payload["body"] = body
         if domain:
             payload["domain"] = domain
+        if css_extractor:
+            payload["css_extractor"] = css_extractor
+        if autoparse:
+            payload["autoparse"] = True
+        if output:
+            payload["output"] = output
+        if js_scenario:
+            payload["js_scenario"] = js_scenario
+        if block_ads:
+            payload["block_ads"] = True
+        if block_resources:
+            payload["block_resources"] = True
+        if device:
+            payload["device"] = device
+        if ai_extract:
+            payload["ai_extract"] = ai_extract
+        if session_id:
+            payload["session_id"] = session_id
+        if callback_url:
+            payload["callback_url"] = callback_url
 
-        data = await self._make_request("/api/scrape", payload)
+        data = await self._make_request("/scrape", payload)
         return ScrapeResponse.from_dict(data)
 
     async def get_html(self, url: str, **kwargs) -> str:
@@ -607,10 +712,13 @@ class AsyncClearScrape:
         """Async version of extract()."""
         result = await self.scrape(url, domain=domain, **kwargs)
 
-        if not result.extracted:
+        # Check domain_data first (used by domain-specific endpoints), then extracted
+        data = result.domain_data or result.extracted
+
+        if not data:
             raise ClearScrapeError("No extracted data returned")
 
-        return result.extracted
+        return data
 
     def get_proxy_config(
         self,
@@ -718,7 +826,7 @@ class AsyncClearScrape:
         if attempt < self.retries:
             delay = 5 if status_code == 429 else 2**attempt
             await asyncio.sleep(delay)
-            return await self._make_request("/api/scrape", payload, attempt + 1)
+            return await self._make_request("/scrape", payload, attempt + 1)
 
         if status_code == 429:
             raise RateLimitError(message)
