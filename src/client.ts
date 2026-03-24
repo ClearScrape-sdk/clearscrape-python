@@ -162,13 +162,22 @@ export class ClearScrape {
    * ```
    */
   async extract<T = Record<string, unknown>>(
-    url: string,
+    urlOrQuery: string,
     domain: ScrapeOptions['domain']
   ): Promise<T> {
-    const result = await this.scrape({ url, domain });
+    // Map domain to endpoint path
+    const isGoogle = domain === 'google' || domain === 'google_shopping';
+    const domainPath = domain === 'google_shopping' ? 'google/shopping'
+      : domain === 'linkedin_jobs' ? 'linkedin/jobs'
+      : domain;
+    const endpoint = `/scrape/${domainPath}`;
+    const payload = isGoogle
+      ? { query: urlOrQuery }
+      : { url: urlOrQuery };
 
-    // Check domain_data first (used by domain-specific endpoints), then extracted
-    const data = result.data.domain_data || result.data.extracted;
+    const result = await this.makeRequest(endpoint, payload);
+
+    const data = result.data?.domain_data || result.data?.extracted || result;
 
     if (!data) {
       throw new ClearScrapeError('No extracted data returned', 500);
