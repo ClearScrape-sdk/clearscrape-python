@@ -32,7 +32,18 @@ pnpm add clearscrape
 
 ## Quick Start
 
+**1. Create a `.env` file** in your project root:
+
+```bash
+CLEARSCRAPE_API_KEY=your_api_key_here
+```
+
+> Get your API key from the [ClearScrape Dashboard](https://clearscrape.io/dashboard/api-keys). Never hardcode API keys in source code.
+
+**2. Use the SDK:**
+
 ```typescript
+import 'dotenv/config'; // npm install dotenv
 import { ClearScrape } from 'clearscrape';
 
 const client = new ClearScrape({
